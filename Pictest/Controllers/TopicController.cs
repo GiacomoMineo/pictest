@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Model;
+using Pictest.Persistence.Interface;
+using Pictest.Persistence.Storage;
 
 namespace Pictest.Controllers
 {
@@ -9,6 +12,13 @@ namespace Pictest.Controllers
     [Produces("application/json")]
     public class TopicController : ControllerBase
     {
+        private readonly ITopicRepository _topicRepository;
+
+        public TopicController(ITopicRepository topicRepository)
+        {
+            _topicRepository = topicRepository;
+        }
+
         [HttpGet("{id}")]
         public string Get(string id)
         {
@@ -16,9 +26,14 @@ namespace Pictest.Controllers
         }
 
         [HttpPost]
-        public Topic Post([FromBody] Topic request)
+        public async Task<string> Post([FromBody] Topic request)
         {
-            return request;
+            return await _topicRepository.CreateAsync(new TopicStorage
+            {
+                Name = request.Name,
+                CreatedAt = request.CreatedAt,
+                Tags = request.Tags
+            });
         }
 
         [HttpGet]
