@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Model;
+using Pictest.Model.Response;
 using Pictest.Persistence.Interface;
 using Pictest.Persistence.Storage;
 
@@ -20,20 +22,23 @@ namespace Pictest.Controllers
         }
 
         [HttpGet("{id}")]
-        public string Get(string id)
+        public async Task<Topic> Get(string id)
         {
-            return id;
+            return await _topicRepository.ReadAsync(id);
         }
 
         [HttpPost]
-        public async Task<string> Post([FromBody] Topic request)
+        public async Task<TopicPostResponse> Post([FromBody] Topic request)
         {
-            return await _topicRepository.CreateAsync(new TopicStorage
+            return new TopicPostResponse
             {
-                Name = request.Name,
-                CreatedAt = request.CreatedAt,
-                Tags = request.Tags
-            });
+                Id = await _topicRepository.CreateAsync(new TopicStorage
+                {
+                    Name = request.Name,
+                    CreatedAt = request.CreatedAt,
+                    Tags = request.Tags
+                })
+            };
         }
 
         [HttpGet]

@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Pictest.Middleware;
-using Pictest.Model;
+using Pictest.Persistence;
 using Pictest.Persistence.Interface;
 using Pictest.Persistence.Repository;
 
@@ -35,6 +36,10 @@ namespace Pictest
 
             services.AddRouting()
                 .AddMvcCore()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                })
                 .AddJsonFormatters()
                 .AddDataAnnotations()
                 .AddDataAnnotationsLocalization();
@@ -44,6 +49,7 @@ namespace Pictest
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseJsonRequest();
+            app.UseExceptionMiddleware();
             app.UseMvc();
         }
     }

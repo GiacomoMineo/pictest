@@ -2,7 +2,7 @@
 
 namespace Pictest.Middleware
 {
-    public static class JsonRequestExtensions
+    public static class JsonRequestExtension
     {
         public static IApplicationBuilder UseJsonRequest(this IApplicationBuilder app)
         {

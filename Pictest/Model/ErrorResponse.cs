@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Pictest.Model
 {
-    public class MongoDbOptions
+    public class ErrorResponse
     {
-        public string Url { get; set; }
+        public string Error { get; set; }
+        public string Message { get; set; }
     }
 }
