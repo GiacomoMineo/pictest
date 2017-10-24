@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Model;
@@ -22,29 +21,42 @@ namespace Pictest.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Topic> Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
-            return await _topicRepository.ReadAsync(id);
+            var result = await _topicRepository.ReadAsync(id);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatest()
+        {
+            var result = await _topicRepository.ReadLatestAsync();
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<TopicPostResponse> Post([FromBody] Topic request)
+        public async Task<IActionResult> Post([FromBody] Topic request)
         {
-            return new TopicPostResponse
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            return Ok(new TopicPostResponse
             {
                 Id = await _topicRepository.CreateAsync(new TopicStorage
                 {
                     Name = request.Name,
-                    CreatedAt = request.CreatedAt,
+                    CreatedAt = DateTime.UtcNow,
                     Tags = request.Tags
                 })
-            };
-        }
-
-        [HttpGet]
-        public List<Topic> Index()
-        {
-            return new List<Topic>();
+            });
         }
     }
 }

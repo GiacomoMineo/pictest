@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using Pictest.Model;
 using Pictest.Persistence.Interface;
 using Pictest.Persistence.Storage;
 
@@ -11,6 +9,7 @@ namespace Pictest.Persistence.Repository
     public class TopicRepository : ITopicRepository
     {
         private readonly IMongoCollection<TopicStorage> _topicCollection;
+
         public TopicRepository(IMongoDbRepository mongoDbRepository)
         {
             _topicCollection = mongoDbRepository.GetCollection<TopicStorage>("Pic", "Topic");
@@ -18,7 +17,8 @@ namespace Pictest.Persistence.Repository
 
         public async Task<string> CreateAsync(TopicStorage topicStorage)
         {
-            var result = await _topicCollection.Find(t => t.Name == topicStorage.Name).Limit(1).FirstOrDefaultAsync();
+            TopicStorage result = await _topicCollection.Find(t => t.Name == topicStorage.Name).Limit(1)
+                .FirstOrDefaultAsync();
 
             if (result != null)
                 throw new Exception("A Topic with the same name already exists.");
@@ -27,12 +27,13 @@ namespace Pictest.Persistence.Repository
             return topicStorage.Id;
         }
 
-        public async Task<Topic> ReadAsync(string id)
-        {
-            var result = await _topicCollection.Find(t => t.Id == id).Limit(1).FirstOrDefaultAsync();
+        public async Task<TopicStorage> ReadAsync(string id) =>
+            await _topicCollection.Find(t => t.Id == id).Limit(1).FirstOrDefaultAsync();
 
-            //if (result == null)
-            // not found
-        }
+        public async Task<TopicStorage> ReadLatestAsync() => await _topicCollection
+            .Find(x => true)
+            .Sort(Builders<TopicStorage>.Sort.Descending(x => x.Id))
+            .Limit(1)
+            .FirstOrDefaultAsync();
     }
 }
