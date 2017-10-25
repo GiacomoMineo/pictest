@@ -8,6 +8,8 @@ using Pictest.Middleware;
 using Pictest.Persistence;
 using Pictest.Persistence.Interface;
 using Pictest.Persistence.Repository;
+using Pictest.Service;
+using Pictest.Service.Interface;
 
 namespace Pictest
 {
@@ -32,7 +34,9 @@ namespace Pictest
 
             services.AddSingleton<IMongoDbRepository, MongoDbRepository>();
 
-            services.AddSingleton<ITopicRepository, TopicRepository>();
+            services.AddSingleton<IContestRepository, ContestRepository>();
+
+            services.AddSingleton<IContestService, ContestService>();
 
             services.AddRouting()
                 .AddMvcCore()

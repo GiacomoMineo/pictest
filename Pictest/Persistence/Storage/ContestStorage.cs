@@ -7,14 +7,13 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Pictest.Persistence.Storage
 {
     [BsonIgnoreExtraElements]
-    public class TopicStorage
+    public class ContestStorage
     {
         [BsonId]
         [Required]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public string Name { get; set; }
+        public string Topic { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<string> Tags { get; set; }
     }
 }
