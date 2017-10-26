@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Pictest.Persistence.Interface;
 using Pictest.Service.Interface;
 using Pictest.Service.Request;
 
