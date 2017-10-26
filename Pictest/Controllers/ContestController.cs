@@ -18,7 +18,7 @@ namespace Pictest.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Read(string id)
         {
             var result = await _contestService.ReadAsync(id);
 
@@ -29,7 +29,7 @@ namespace Pictest.Controllers
         }
 
         [HttpGet("current")]
-        public async Task<IActionResult> GetCurrent()
+        public async Task<IActionResult> ReadCurrent()
         {
             var result = await _contestService.ReadCurrentAsync();
 
@@ -40,7 +40,7 @@ namespace Pictest.Controllers
         }
 
         [HttpPut("{id}/current")]
-        public async Task<IActionResult> SetCurrent(string id)
+        public async Task<IActionResult> UpdateCurrent(string id)
         {
             var result = await _contestService.SetCurrentAsync(id);
 
