@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp;
 using Pictest.Persistence.Interface;
 using Pictest.Service.Interface;
 using Pictest.Service.Mapper;

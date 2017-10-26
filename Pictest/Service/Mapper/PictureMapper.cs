@@ -15,7 +15,8 @@ namespace Pictest.Service.Mapper
             return new PictureStorage
             {
                 CreatedAt = DateTime.UtcNow,
-                Caption = createPictureRequest.Caption
+                Caption = createPictureRequest.Caption,
+                ContestId = createPictureRequest.ContestId
             };
         }
 

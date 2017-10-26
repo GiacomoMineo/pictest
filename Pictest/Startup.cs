@@ -27,7 +27,6 @@ namespace Pictest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            var mongodbopt = _configuration.GetSection("MongoDB").Get<MongoDbOptions>();
             services.Configure<MongoDbOptions>(_configuration.GetSection("MongoDB"));
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -35,8 +34,10 @@ namespace Pictest
             services.AddSingleton<IMongoDbRepository, MongoDbRepository>();
 
             services.AddSingleton<IContestRepository, ContestRepository>();
+            services.AddSingleton<IPictureRepository, PictureRepository>();
 
             services.AddSingleton<IContestService, ContestService>();
+            services.AddSingleton<IPictureService, PictureService>();
 
             services.AddRouting()
                 .AddMvcCore()
@@ -48,8 +49,7 @@ namespace Pictest
                 .AddDataAnnotations()
                 .AddDataAnnotationsLocalization();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseExceptionMiddleware();

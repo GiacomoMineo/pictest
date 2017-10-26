@@ -1,8 +1,11 @@
-﻿namespace Pictest.Service.Request
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Pictest.Service.Request
 {
     public class CreatePictureRequest
     {
-        public string Contest { get; set; }
+        [Required]
+        public string ContestId { get; set; }
         public string Caption { get; set; }
     }
 }
