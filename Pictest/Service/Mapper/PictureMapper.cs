@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pictest.Persistence.Storage;
 using Pictest.Service.Request;
 using Pictest.Service.Response;
@@ -7,7 +9,8 @@ namespace Pictest.Service.Mapper
 {
     public static class PictureMapper
     {
-        public static PictureStorage MapCreatePictureRequestToPictureStorage(CreatePictureRequest createPictureRequest)
+        public static PictureStorage MapCreatePictureRequestToPictureStorage(CreatePictureRequest createPictureRequest,
+            string url, string userId)
         {
             if (createPictureRequest == null)
                 return null;
@@ -16,7 +19,9 @@ namespace Pictest.Service.Mapper
             {
                 CreatedAt = DateTime.UtcNow,
                 Caption = createPictureRequest.Caption,
-                ContestId = createPictureRequest.ContestId
+                ContestId = createPictureRequest.ContestId,
+                Url = url,
+                UserId = userId
             };
         }
 
@@ -31,6 +36,26 @@ namespace Pictest.Service.Mapper
                 Url = pictureStorage.Url,
                 Caption = pictureStorage.Caption
             };
+        }
+
+        public static ReadPictureListResponse MapPictureStorageListToReadPictureResponseList(
+            List<PictureStorage> pictureStorages)
+        {
+            var pictures = pictureStorages?.Select(MapPictureStorageToReadPictureResponse).ToList();
+
+            return new ReadPictureListResponse
+            {
+                Pictures = pictures,
+                Cursor = pictures?.LastOrDefault()?.Id
+            };
+        }
+
+        public static PictureStorage MapUpdatePictureRequestToPictureStorage(UpdatePictureRequest updatePictureRequest)
+        {
+            if (updatePictureRequest == null)
+                return null;
+
+            return new PictureStorage {Caption = updatePictureRequest.Caption};
         }
     }
 }

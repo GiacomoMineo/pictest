@@ -11,5 +11,6 @@ namespace Pictest.Persistence.Interface
         Task<ContestStorage> ReadAsync(string id);
         Task<ContestSettingsStorage> ReadSettingsAsync(string id);
         Task SetCurrentAsync(string id);
+        Task UpdateAsync(string id, ContestStorage contestStorage);
     }
 }

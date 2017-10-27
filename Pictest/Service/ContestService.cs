@@ -54,5 +54,15 @@ namespace Pictest.Service
 
             return ContestMapper.MapContestStorageToReadContestResponse(result);
         }
+
+        public async Task UpdateAsync(string id, UpdateContestRequest updateContestRequest)
+        {
+            var contestStorage = ContestMapper.MapUpdateContestRequestToContestStorage(updateContestRequest);
+
+            if (updateContestRequest.Closed == true)
+                contestStorage.Winner = null; // TODO read userId from session
+
+            await _contestRepository.UpdateAsync(id, contestStorage);
+        }
     }
 }

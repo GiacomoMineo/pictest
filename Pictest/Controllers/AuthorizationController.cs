@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Pictest.Service.Interface;
 using Pictest.Service.Request;
 
 namespace Pictest.Controllers
@@ -15,10 +16,12 @@ namespace Pictest.Controllers
     public class AuthorizationController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthorizationController(IConfiguration configuration)
+        public AuthorizationController(IConfiguration configuration, IUserService userService)
         {
             _configuration = configuration;
+            _userService = userService;
         }
 
         [AllowAnonymous]
@@ -28,14 +31,14 @@ namespace Pictest.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Invalid login request.");
 
-            var user = await _userManager.FindByEmailAsync(login.Email);
+            var user = await _userService.FindByEmailAsync(login.Email);
 
             if (user == null)
                 return NotFound("User not found.");
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password);
+            var result = await _userService.CheckPasswordSignInAsync(user, login.Password);
 
-            if (!result.Succeded)
+            if (!result)
                 return Forbid("Invalid password.");
 
             var claims = new[]

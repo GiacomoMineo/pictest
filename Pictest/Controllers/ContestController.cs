@@ -50,12 +50,23 @@ namespace Pictest.Controllers
             return Ok(result);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateContestRequest updateContestRequest)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _contestService.UpdateAsync(id, updateContestRequest);
+
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateContestRequest createContestRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            
+
             return Ok(await _contestService.CreateAsync(createContestRequest));
         }
     }

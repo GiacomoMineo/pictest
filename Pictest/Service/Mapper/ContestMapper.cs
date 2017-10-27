@@ -19,6 +19,17 @@ namespace Pictest.Service.Mapper
             };
         }
 
+        public static ContestStorage MapUpdateContestRequestToContestStorage(UpdateContestRequest updateContestRequest)
+        {
+            if (updateContestRequest == null)
+                return null;
+
+            return new ContestStorage
+            {
+                Closed = updateContestRequest.Closed
+            };
+        }
+
         public static ReadContestResponse MapContestStorageToReadContestResponse(ContestStorage contestStorage)
         {
             if (contestStorage == null)

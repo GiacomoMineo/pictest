@@ -39,7 +39,7 @@ namespace Pictest
                     config.RequireHttpsMetadata = false;
                     config.SaveToken = true;
 
-                    config.Events = new JwtBearerEvents() { }
+                    config.Events = new JwtBearerEvents {};
 
                     config.TokenValidationParameters = new TokenValidationParameters()
                     {

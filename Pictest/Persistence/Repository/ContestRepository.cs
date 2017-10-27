@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 using Pictest.Persistence.Interface;
 using Pictest.Persistence.Storage;
@@ -41,6 +42,24 @@ namespace Pictest.Persistence.Repository
             var updateDefinition = Builders<ContestSettingsStorage>.Update.Set(x => x.CurrentId, id);
             await _contestSettingsCollection.FindOneAndUpdateAsync<ContestSettingsStorage>(x => x.Id == "current", updateDefinition,
                 new FindOneAndUpdateOptions<ContestSettingsStorage, ContestSettingsStorage> {IsUpsert = true});
+        }
+
+        public async Task UpdateAsync(string id, ContestStorage contestStorage)
+        {
+            var contestUpdateBuilder = Builders<ContestStorage>.Update;
+
+            var updateValues = new List<UpdateDefinition<ContestStorage>>();
+
+            if (contestStorage.Voters != null)
+                updateValues.Add(contestUpdateBuilder.Set(x => x.Voters, contestStorage.Voters));
+            if (contestStorage.Closed != null)
+                updateValues.Add(contestUpdateBuilder.Set(x => x.Closed, contestStorage.Closed));
+            if (contestStorage.Winner != null)
+                updateValues.Add(contestUpdateBuilder.Set(x => x.Winner, contestStorage.Winner));
+
+            var pictureUpdate = contestUpdateBuilder.Combine(updateValues);
+
+            await _contestCollection.UpdateOneAsync(x => x.Id == id, pictureUpdate);
         }
     }
 }

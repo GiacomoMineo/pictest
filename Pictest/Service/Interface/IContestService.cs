@@ -11,5 +11,6 @@ namespace Pictest.Service.Interface
         Task<ReadContestResponse> ReadAsync(string id);
         Task<ReadContestResponse> ReadCurrentAsync();
         Task<ReadContestResponse> SetCurrentAsync(string id);
+        Task UpdateAsync(string id, UpdateContestRequest updateContestRequest);
     }
 }

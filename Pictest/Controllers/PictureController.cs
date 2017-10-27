@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
@@ -31,19 +29,32 @@ namespace Pictest.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllInContest([FromQuery] string cursor, string contest)
+        {
+            var pictures = await _pictureService.ReadAllAsync(cursor, contest);
+
+            return Ok(pictures);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdatePictureRequest updatePictureRequest)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _pictureService.UpdateAsync(id, updatePictureRequest);
+
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile picture, [FromForm] CreatePictureRequest createPictureRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var filePath = Path.GetFullPath(Environment.CurrentDirectory + "/Uploads/" + picture.FileName);
-
-            if (picture.Length > 0)
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await picture.CopyToAsync(stream);
-
-            var result = await _pictureService.CreateAsync(createPictureRequest);
+            var result = await _pictureService.CreateAsync(picture, createPictureRequest);
 
             return Ok(result);
         }
