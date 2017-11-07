@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Pictest.Middleware;
@@ -14,6 +14,7 @@ using Pictest.Persistence.Interface;
 using Pictest.Persistence.Repository;
 using Pictest.Service;
 using Pictest.Service.Interface;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Pictest
 {
@@ -27,7 +28,7 @@ namespace Pictest
             _configuration = configuration;
             _environment = env;
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
@@ -39,9 +40,9 @@ namespace Pictest
                     config.RequireHttpsMetadata = false;
                     config.SaveToken = true;
 
-                    config.Events = new JwtBearerEvents {};
+                    config.Events = new JwtBearerEvents();
 
-                    config.TokenValidationParameters = new TokenValidationParameters()
+                    config.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidIssuer = _configuration["Token:Issuer"],
                         ValidAudience = _configuration["Token:Audience"],
@@ -55,23 +56,35 @@ namespace Pictest
 
             services.AddSingleton<IContestRepository, ContestRepository>();
             services.AddSingleton<IPictureRepository, PictureRepository>();
+            services.AddSingleton<IUserRepository, UserRepository>();
 
             services.AddSingleton<IContestService, ContestService>();
             services.AddSingleton<IPictureService, PictureService>();
+            services.AddSingleton<IUserService, UserService>();
 
             services.AddRouting()
                 .AddMvcCore()
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                })
+                .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .AddJsonFormatters()
                 .AddDataAnnotations()
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization()
+                .AddApiExplorer();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info {Title = "Pictest API", Version = "v1"});
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+
+            });
         }
-        
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pictest API");
+            });
             app.UseExceptionMiddleware();
             app.UseMvc();
         }

@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Pictest.Persistence.Storage
 {
@@ -6,6 +8,8 @@ namespace Pictest.Persistence.Storage
     public class UserStorage
     {
         [BsonId]
+        [Required]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

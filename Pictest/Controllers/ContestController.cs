@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
 using Pictest.Service.Request;
@@ -24,7 +25,7 @@ namespace Pictest.Controllers
 
             if (result == null)
                 return NotFound();
-
+            
             return Ok(result);
         }
 

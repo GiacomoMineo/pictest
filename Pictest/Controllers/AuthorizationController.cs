@@ -25,7 +25,7 @@ namespace Pictest.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> GenerateToken([FromBody] LoginRequest login)
         {
             if (!ModelState.IsValid)
@@ -58,6 +58,16 @@ namespace Pictest.Controllers
                 );
 
             return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest createUserRequest)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid request.");
+
+            return Ok(await _userService.CreateUserAsync(createUserRequest));
         }
     }
 }
