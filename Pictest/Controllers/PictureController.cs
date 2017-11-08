@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
@@ -6,6 +9,7 @@ using Pictest.Service.Request;
 
 namespace Pictest.Controllers
 {
+    [Authorize]
     [Route("/api/[controller]")]
     [Consumes("application/json", "multipart/form-data")]
     [Produces("application/json")]
@@ -43,7 +47,9 @@ namespace Pictest.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            await _pictureService.UpdateAsync(id, updatePictureRequest);
+            var userId = HttpContext?.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+            await _pictureService.UpdateAsync(id, userId, updatePictureRequest);
 
             return Ok();
         }
@@ -54,7 +60,9 @@ namespace Pictest.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var result = await _pictureService.CreateAsync(picture, createPictureRequest);
+            var userId = HttpContext?.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+            var result = await _pictureService.CreateAsync(picture, userId, createPictureRequest);
 
             return Ok(result);
         }

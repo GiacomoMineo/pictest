@@ -10,5 +10,6 @@ namespace Pictest.Service.Request
     {
         [Required]
         public string Topic { get; set; }
+        public bool Current { get; set; }
     }
 }

@@ -21,7 +21,8 @@ namespace Pictest.Service.Mapper
                 Caption = createPictureRequest.Caption,
                 ContestId = createPictureRequest.ContestId,
                 Url = url,
-                UserId = userId
+                UserId = userId,
+                Votes = 0
             };
         }
 

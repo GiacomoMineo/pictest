@@ -25,6 +25,7 @@ namespace Pictest.Service.Mapper
 
             return new User
             {
+                Id = userStorage.Id,
                 Email = userStorage.Email,
                 Password = userStorage.Password
             };

@@ -18,6 +18,6 @@ namespace Pictest.Persistence.Storage
         public string UserId { get; set; }
         public string ContestId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int? Votes { get; set; }
+        public int Votes { get; set; }
     }
 }

@@ -62,8 +62,8 @@ namespace Pictest.Persistence.Repository
 
             if (!string.IsNullOrEmpty(pictureStorage.Caption))
                 updateValues.Add(pictureUpdateBuilder.Set(x => x.Caption, pictureStorage.Caption));
-            if (pictureStorage.Votes != null)
-                updateValues.Add(pictureUpdateBuilder.Set(x => x.Votes, pictureStorage.Votes));
+
+            updateValues.Add(pictureUpdateBuilder.Set(x => x.Votes, pictureStorage.Votes));
 
             var pictureUpdate = pictureUpdateBuilder.Combine(updateValues);
 

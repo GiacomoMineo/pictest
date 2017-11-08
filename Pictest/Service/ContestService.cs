@@ -27,6 +27,9 @@ namespace Pictest.Service
             var result =
                 await _contestRepository.CreateAsync(ContestMapper.MapCreateContestRequestToContestStorage(contest));
 
+            if (contest.Current)
+                await _contestRepository.SetCurrentAsync(result);
+
             return new CreateContestResponse {Id = result};
         }
 
@@ -60,7 +63,10 @@ namespace Pictest.Service
             var contestStorage = ContestMapper.MapUpdateContestRequestToContestStorage(updateContestRequest);
 
             if (updateContestRequest.Closed == true)
-                contestStorage.Winner = null; // TODO read userId from session
+                //TODO compute winner
+                contestStorage.Winner = null;
+                //TODO give topic creation privilege to winner
+                
 
             await _contestRepository.UpdateAsync(id, contestStorage);
         }

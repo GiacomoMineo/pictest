@@ -24,15 +24,14 @@ namespace Pictest.Service
             _contestRepository = contestRepository;
         }
 
-        public async Task<CreatePictureResponse> CreateAsync(IFormFile picture, CreatePictureRequest createPictureRequest)
+        public async Task<CreatePictureResponse> CreateAsync(IFormFile picture, string userId,
+            CreatePictureRequest createPictureRequest)
         {
             var filePath = Path.GetFullPath(Environment.CurrentDirectory + "/Uploads/" + picture.FileName);
 
             if (picture.Length > 0)
                 using (var stream = new FileStream(filePath, FileMode.Create))
                     await picture.CopyToAsync(stream);
-
-            string userId = null; // TODO read from session
 
             var result = await _pictureRepository.CreateAsync(
                 PictureMapper.MapCreatePictureRequestToPictureStorage(createPictureRequest, picture.FileName, userId));
@@ -55,16 +54,20 @@ namespace Pictest.Service
                 await _pictureRepository.ReadAllAsync(cursor));
         }
 
-        public async Task UpdateAsync(string pictureId, UpdatePictureRequest updatePictureRequest)
+        public async Task UpdateAsync(string pictureId, string userId, UpdatePictureRequest updatePictureRequest)
         {
             var pictureStorage = PictureMapper.MapUpdatePictureRequestToPictureStorage(updatePictureRequest);
 
             var previousPicture = await _pictureRepository.ReadAsync(pictureId);
             var pictureContest = await _contestRepository.ReadAsync(previousPicture.ContestId);
 
-            string userId = null; // TODO read from session
-            if (updatePictureRequest.Vote && pictureContest.Voters.All(x => x != userId))
+            if (updatePictureRequest.Vote &&
+                (pictureContest.Voters == null ||
+                 pictureContest.Voters.All(x => x != userId)))
             {
+                if (pictureContest.Voters == null)
+                    pictureContest.Voters = new List<string>();
+
                 pictureContest.Voters.Add(userId);
                 pictureStorage.Votes = previousPicture.Votes + 1;
 
@@ -72,9 +75,13 @@ namespace Pictest.Service
                 {
                     Voters = pictureContest.Voters
                 });
-            }
 
-            await _pictureRepository.UpdateAsync(pictureId, pictureStorage);
+                await _pictureRepository.UpdateAsync(pictureId, pictureStorage);
+            }
+            else if (updatePictureRequest.Caption != null)
+            {
+                await _pictureRepository.UpdateAsync(pictureId, pictureStorage);
+            }
         }
     }
 }

@@ -1,8 +1,12 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -34,7 +38,11 @@ namespace Pictest
             services.AddOptions();
             services.Configure<MongoDbOptions>(_configuration.GetSection("MongoDB"));
 
-            services.AddAuthentication()
+            services.AddAuthentication(
+                    options =>
+                    {
+                        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
                 .AddJwtBearer(config =>
                 {
                     config.RequireHttpsMetadata = false;
@@ -44,6 +52,8 @@ namespace Pictest
 
                     config.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
                         ValidIssuer = _configuration["Token:Issuer"],
                         ValidAudience = _configuration["Token:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]))
@@ -67,6 +77,8 @@ namespace Pictest
                 .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .AddJsonFormatters()
                 .AddDataAnnotations()
+                .AddAuthorization(x =>
+                    new AuthorizationPolicyBuilder().AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme))
                 .AddDataAnnotationsLocalization()
                 .AddApiExplorer();
 
@@ -74,17 +86,14 @@ namespace Pictest
             {
                 c.SwaggerDoc("v1", new Info {Title = "Pictest API", Version = "v1"});
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-
             });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pictest API");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pictest API"); });
+            app.UseAuthentication();
             app.UseExceptionMiddleware();
             app.UseMvc();
         }
