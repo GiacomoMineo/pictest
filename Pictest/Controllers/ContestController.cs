@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
 using Pictest.Service.Request;
@@ -18,9 +17,23 @@ namespace Pictest.Controllers
             _contestService = contestService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ReadAll([FromQuery] string cursor)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _contestService.ReadAllAsync(cursor);
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Read(string id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             var result = await _contestService.ReadAsync(id);
 
             if (result == null)
@@ -32,6 +45,9 @@ namespace Pictest.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> ReadCurrent()
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             var result = await _contestService.ReadCurrentAsync();
 
             if (result == null)
@@ -43,6 +59,9 @@ namespace Pictest.Controllers
         [HttpPut("{id}/current")]
         public async Task<IActionResult> UpdateCurrent(string id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             var result = await _contestService.SetCurrentAsync(id);
 
             if (result == null)

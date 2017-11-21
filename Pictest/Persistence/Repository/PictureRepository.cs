@@ -69,5 +69,15 @@ namespace Pictest.Persistence.Repository
 
             await _pictureCollection.UpdateOneAsync(x => x.Id == pictureId, pictureUpdate);
         }
+
+        public async Task<string> ReadPictureUserWithMostVotes(string id)
+        {
+            var result = await _pictureCollection
+                .Find(x => x.ContestId == id)
+                .SortBy(x => x.Votes)
+                .Limit(1).FirstOrDefaultAsync();
+
+            return result?.UserId;
+        }
     }
 }

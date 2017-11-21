@@ -60,8 +60,11 @@ namespace Pictest.Service
 
             var previousPicture = await _pictureRepository.ReadAsync(pictureId);
             var pictureContest = await _contestRepository.ReadAsync(previousPicture.ContestId);
+            var currentContest = await _contestRepository.ReadSettingsAsync("current");
 
+            // Vote has been cast, picture belongs to current contest, user has not already voted for contest
             if (updatePictureRequest.Vote &&
+                pictureContest.Id == currentContest.CurrentId &&
                 (pictureContest.Voters == null ||
                  pictureContest.Voters.All(x => x != userId)))
             {

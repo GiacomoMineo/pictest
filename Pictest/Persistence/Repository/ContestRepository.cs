@@ -10,6 +10,7 @@ namespace Pictest.Persistence.Repository
     {
         private readonly IMongoCollection<ContestStorage> _contestCollection;
         private readonly IMongoCollection<ContestSettingsStorage> _contestSettingsCollection;
+        private const int PageSize = 10;
 
         public ContestRepository(IMongoDbRepository mongoDbRepository)
         {
@@ -40,8 +41,28 @@ namespace Pictest.Persistence.Repository
         public async Task SetCurrentAsync(string id)
         {
             var updateDefinition = Builders<ContestSettingsStorage>.Update.Set(x => x.CurrentId, id);
-            await _contestSettingsCollection.FindOneAndUpdateAsync<ContestSettingsStorage>(x => x.Id == "current", updateDefinition,
+            await _contestSettingsCollection.FindOneAndUpdateAsync<ContestSettingsStorage>(x => x.Id == "current",
+                updateDefinition,
                 new FindOneAndUpdateOptions<ContestSettingsStorage, ContestSettingsStorage> {IsUpsert = true});
+        }
+
+        public async Task SetWinnerAsync(string id)
+        {
+            var updateDefinition = Builders<ContestSettingsStorage>.Update.Set(x => x.WinnerId, id);
+            await _contestSettingsCollection.FindOneAndUpdateAsync<ContestSettingsStorage>(x => x.Id == "winner",
+                updateDefinition,
+                new FindOneAndUpdateOptions<ContestSettingsStorage, ContestSettingsStorage> {IsUpsert = true});
+        }
+
+        public async Task<List<ContestStorage>> ReadAllAsync(string cursor)
+        {
+            var filter = cursor != null
+                ? Builders<ContestStorage>.Filter.Gt("Id", cursor)
+                : Builders<ContestStorage>.Filter.Empty;
+
+            return await _contestCollection.Find(filter)
+                .SortBy(x => x.Id)
+                .Limit(PageSize).ToListAsync();
         }
 
         public async Task UpdateAsync(string id, ContestStorage contestStorage)

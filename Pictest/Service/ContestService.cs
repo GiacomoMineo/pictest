@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Chroniton;
+using Chroniton.Jobs;
+using Chroniton.Schedules;
 using Pictest.Persistence.Interface;
 using Pictest.Service.Interface;
 using Pictest.Service.Mapper;
@@ -11,10 +15,14 @@ namespace Pictest.Service
     public class ContestService : IContestService
     {
         private readonly IContestRepository _contestRepository;
+        private readonly IPictureRepository _pictureRepository;
+        private readonly ISingularity _singularity;
 
-        public ContestService(IContestRepository contestRepository)
+        public ContestService(IContestRepository contestRepository, IPictureRepository pictureRepository, ISingularity singularity)
         {
             _contestRepository = contestRepository;
+            _pictureRepository = pictureRepository;
+            _singularity = singularity;
         }
 
         public async Task<CreateContestResponse> CreateAsync(CreateContestRequest contest)
@@ -28,9 +36,27 @@ namespace Pictest.Service
                 await _contestRepository.CreateAsync(ContestMapper.MapCreateContestRequestToContestStorage(contest));
 
             if (contest.Current)
+            {
                 await _contestRepository.SetCurrentAsync(result);
 
+                // Schedule contest closing job
+                var job = new SimpleJob(async scheduledTime =>
+                {
+                    await UpdateAsync(result, new UpdateContestRequest
+                    {
+                        Closed = true
+                    });
+                });
+
+                _singularity.ScheduleJob(new RunOnceSchedule(TimeSpan.FromMinutes(1)), job, false);
+            }
+
             return new CreateContestResponse {Id = result};
+        }
+
+        public async Task<ReadContestListResponse> ReadAllAsync(string cursor)
+        {
+            return ContestMapper.MapContestStorageToReadContestResponseList(await _contestRepository.ReadAllAsync(cursor));
         }
 
         public async Task<ReadContestResponse> ReadAsync(string id)
@@ -63,12 +89,18 @@ namespace Pictest.Service
             var contestStorage = ContestMapper.MapUpdateContestRequestToContestStorage(updateContestRequest);
 
             if (updateContestRequest.Closed == true)
-                //TODO compute winner
-                contestStorage.Winner = null;
-                //TODO give topic creation privilege to winner
-                
+            {
+                var winner = await DeclareContestWinnerAsync(id);
+                contestStorage.Winner = winner;
+                await _contestRepository.SetWinnerAsync(winner);
+            }
 
             await _contestRepository.UpdateAsync(id, contestStorage);
+        }
+
+        public async Task<string> DeclareContestWinnerAsync(string id)
+        {
+            return await _pictureRepository.ReadPictureUserWithMostVotes(id);
         }
     }
 }

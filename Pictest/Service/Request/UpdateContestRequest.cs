@@ -2,6 +2,6 @@
 {
     public class UpdateContestRequest
     {
-        public bool? Closed { get; set; }
+        public bool Closed { get; set; }
     }
 }

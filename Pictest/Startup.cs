@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using Chroniton;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -72,6 +73,8 @@ namespace Pictest
             services.AddSingleton<IPictureService, PictureService>();
             services.AddSingleton<IUserService, UserService>();
 
+            services.AddSingleton<ISingularity, Singularity>(serviceProvider => Singularity.Instance);
+
             services.AddRouting()
                 .AddMvcCore()
                 .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
@@ -91,6 +94,9 @@ namespace Pictest
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var singularity = Singularity.Instance;
+            singularity.Start();
+
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pictest API"); });
             app.UseAuthentication();

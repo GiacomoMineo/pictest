@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MongoDB.Bson;
 using Pictest.Persistence.Storage;
 
@@ -12,5 +13,7 @@ namespace Pictest.Persistence.Interface
         Task<ContestSettingsStorage> ReadSettingsAsync(string id);
         Task SetCurrentAsync(string id);
         Task UpdateAsync(string id, ContestStorage contestStorage);
+        Task SetWinnerAsync(string id);
+        Task<List<ContestStorage>> ReadAllAsync(string cursor);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pictest.Persistence.Storage;
 using Pictest.Service.Request;
 using Pictest.Service.Response;
@@ -39,7 +41,19 @@ namespace Pictest.Service.Mapper
             {
                 Id = contestStorage.Id,
                 CreatedAt = contestStorage.CreatedAt,
-                Topic = contestStorage.Topic
+                Topic = contestStorage.Topic,
+                Closed = contestStorage.Closed
+            };
+        }
+
+        public static ReadContestListResponse MapContestStorageToReadContestResponseList(List<ContestStorage> contestStorages)
+        {
+            var contests = contestStorages?.Select(MapContestStorageToReadContestResponse).ToList();
+
+            return new ReadContestListResponse
+            {
+                Contests = contests,
+                Cursor = contests?.LastOrDefault()?.Id
             };
         }
     }

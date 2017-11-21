@@ -10,5 +10,6 @@ namespace Pictest.Persistence.Storage
         public string Id { get; set; }
 
         public string CurrentId { get; set; }
+        public string WinnerId { get; set; }
     }
 }
