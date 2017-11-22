@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
@@ -9,7 +8,6 @@ using Pictest.Service.Request;
 
 namespace Pictest.Controllers
 {
-    [Authorize]
     [Route("/api/[controller]")]
     [Consumes("application/json", "multipart/form-data")]
     [Produces("application/json")]

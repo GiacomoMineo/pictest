@@ -40,10 +40,7 @@ namespace Pictest
             services.Configure<MongoDbOptions>(_configuration.GetSection("MongoDB"));
 
             services.AddAuthentication(
-                    options =>
-                    {
-                        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
+                    options => { options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
                 .AddJwtBearer(config =>
                 {
                     config.RequireHttpsMetadata = false;
@@ -77,6 +74,7 @@ namespace Pictest
 
             services.AddRouting()
                 .AddMvcCore()
+                .AddCors()
                 .AddJsonOptions(options => { options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; })
                 .AddJsonFormatters()
                 .AddDataAnnotations()
@@ -99,6 +97,11 @@ namespace Pictest
 
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pictest API"); });
+            app.UseCors(builder => builder.AllowAnyHeader()
+                .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .WithOrigins("http://localhost:3000")
+                .AllowCredentials()
+                .SetPreflightMaxAge(TimeSpan.FromDays(30)));
             app.UseAuthentication();
             app.UseExceptionMiddleware();
             app.UseMvc();
