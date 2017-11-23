@@ -42,7 +42,9 @@ namespace Pictest.Service.Mapper
                 Id = contestStorage.Id,
                 CreatedAt = contestStorage.CreatedAt,
                 Topic = contestStorage.Topic,
-                Closed = contestStorage.Closed
+                Closed = contestStorage.Closed,
+                Voters = contestStorage.Voters,
+                Winner = contestStorage.Winner
             };
         }
 

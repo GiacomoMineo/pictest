@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Pictest.Service.Response
 {
@@ -8,5 +9,7 @@ namespace Pictest.Service.Response
         public string Topic { get; set; }
         public DateTime? CreatedAt { get; set; }
         public bool Closed { get; set; }
+        public List<string> Voters { get; set; }
+        public string Winner { get; set; }
     }
 }
