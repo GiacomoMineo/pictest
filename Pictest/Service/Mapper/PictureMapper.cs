@@ -35,7 +35,9 @@ namespace Pictest.Service.Mapper
             {
                 Id = pictureStorage.Id,
                 Url = pictureStorage.Url,
-                Caption = pictureStorage.Caption
+                Caption = pictureStorage.Caption,
+                CreatedAt = pictureStorage.CreatedAt,
+                Votes = pictureStorage.Votes
             };
         }
 
