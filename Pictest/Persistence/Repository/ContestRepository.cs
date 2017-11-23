@@ -10,7 +10,7 @@ namespace Pictest.Persistence.Repository
     {
         private readonly IMongoCollection<ContestStorage> _contestCollection;
         private readonly IMongoCollection<ContestSettingsStorage> _contestSettingsCollection;
-        private const int PageSize = 10;
+        private const int PageSize = 1;
 
         public ContestRepository(IMongoDbRepository mongoDbRepository)
         {
