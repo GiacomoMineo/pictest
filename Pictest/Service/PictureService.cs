@@ -54,7 +54,7 @@ namespace Pictest.Service
                 await _pictureRepository.ReadAllAsync(cursor));
         }
 
-        public async Task UpdateAsync(string pictureId, string userId, UpdatePictureRequest updatePictureRequest)
+        public async Task<bool> UpdateAsync(string pictureId, string userId, UpdatePictureRequest updatePictureRequest)
         {
             var pictureStorage = PictureMapper.MapUpdatePictureRequestToPictureStorage(updatePictureRequest);
 
@@ -80,11 +80,17 @@ namespace Pictest.Service
                 });
 
                 await _pictureRepository.UpdateAsync(pictureId, pictureStorage);
+
+                return true;
             }
-            else if (updatePictureRequest.Caption != null)
+            if (updatePictureRequest.Caption != null)
             {
                 await _pictureRepository.UpdateAsync(pictureId, pictureStorage);
+
+                return true;
             }
+
+            return false;
         }
     }
 }

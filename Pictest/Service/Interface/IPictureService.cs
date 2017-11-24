@@ -12,6 +12,6 @@ namespace Pictest.Service.Interface
         Task<CreatePictureResponse> CreateAsync(IFormFile picture, string userId, CreatePictureRequest createPictureRequest);
         Task<ReadPictureResponse> ReadAsync(string id);
         Task<ReadPictureListResponse> ReadAllAsync(string cursor, string contest);
-        Task UpdateAsync(string pictureId, string userId, UpdatePictureRequest updatePictureRequest);
+        Task<bool> UpdateAsync(string pictureId, string userId, UpdatePictureRequest updatePictureRequest);
     }
 }

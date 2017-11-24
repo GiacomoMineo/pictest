@@ -47,9 +47,10 @@ namespace Pictest.Controllers
 
             var userId = HttpContext?.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
-            await _pictureService.UpdateAsync(id, userId, updatePictureRequest);
+            if (await _pictureService.UpdateAsync(id, userId, updatePictureRequest))
+                return Ok();
 
-            return Ok();
+            return BadRequest();
         }
 
         [HttpPost]
