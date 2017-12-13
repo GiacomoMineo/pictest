@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Query.ResultOperators.Internal;
+﻿using System.Threading.Tasks;
 using Pictest.Service.Request;
 using Pictest.Service.Response;
 

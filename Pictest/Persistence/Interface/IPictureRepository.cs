@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Pictest.Persistence.Storage;
-using Pictest.Service.Request;
 
 namespace Pictest.Persistence.Interface
 {

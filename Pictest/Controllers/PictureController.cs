@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pictest.Service.Interface;
@@ -53,6 +54,7 @@ namespace Pictest.Controllers
             return BadRequest();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(IFormFile picture, [FromForm] CreatePictureRequest createPictureRequest)
         {
