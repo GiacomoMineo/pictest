@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using Chroniton;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -83,7 +85,7 @@ namespace Pictest
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Pictest API", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "Pictest API", Version = "v1" });
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
             });
         }
@@ -101,6 +103,13 @@ namespace Pictest
                 .AllowCredentials()
                 .SetPreflightMaxAge(TimeSpan.FromDays(30)));
             app.UseAuthentication();
+            app.UseFileServer(new FileServerOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+                RequestPath = new PathString("/Uploads"),
+                EnableDirectoryBrowsing = true
+            });
             app.UseExceptionMiddleware();
             app.UseMvc();
         }
